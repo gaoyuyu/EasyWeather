@@ -24,10 +24,13 @@ import com.gaoyy.easyweather.bean.Life;
 import com.gaoyy.easyweather.bean.Pm25;
 import com.gaoyy.easyweather.bean.Realtime;
 import com.gaoyy.easyweather.utils.JsonUtils;
+import com.gaoyy.easyweather.utils.WeatherUtils;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -66,10 +69,14 @@ public class MainActivity extends AppCompatActivity
     private TextView fwTemp2;
     private ImageView fwLabel3;
     private LinearLayout linearLayout2;
-    private TextView textView;
-    private TextView textView2;
+    private TextView fwDay3;
+    private TextView fwInfo3;
     private View view;
     private TextView fwTemp3;
+    private TextView fwBtn;
+
+
+    private Map<String, Integer> weatherIcon;
 
 
     private void assignViews()
@@ -92,7 +99,6 @@ public class MainActivity extends AppCompatActivity
 
 
         //========futureweather=============
-
         fwLabel1 = (ImageView) findViewById(R.id.fw_label1);
         fwDetail1 = (LinearLayout) findViewById(R.id.fw_detail1);
         fwDay1 = (TextView) findViewById(R.id.fw_day1);
@@ -107,16 +113,17 @@ public class MainActivity extends AppCompatActivity
         fwTemp2 = (TextView) findViewById(R.id.fw_temp2);
         fwLabel3 = (ImageView) findViewById(R.id.fw_label3);
         linearLayout2 = (LinearLayout) findViewById(R.id.linearLayout2);
-        textView = (TextView) findViewById(R.id.textView);
-        textView2 = (TextView) findViewById(R.id.textView2);
+        fwDay3 = (TextView) findViewById(R.id.fw_day3);
+        fwInfo3 = (TextView) findViewById(R.id.fw_info3);
         view = findViewById(R.id.view);
         fwTemp3 = (TextView) findViewById(R.id.fw_temp3);
+        fwBtn = (TextView)findViewById(R.id.fw_btn);
+
 
     }
 
 
-
-    private  Handler weatherHanlder  = new Handler()
+    private Handler weatherHanlder = new Handler()
     {
         @Override
         public void handleMessage(Message msg)
@@ -131,17 +138,47 @@ public class MainActivity extends AppCompatActivity
             Log.i("mm", futureWeather.toString());
             Pm25 pm25 = JsonUtils.getPm25Bean(body);
             Log.i("mm", pm25.toString());
-            headerTemperature.setText(realtime.getWeather().getTemperature()+"°");
-            headerCity.setText(realtime.getCity_name());
-            headerWeatherInfo.setText(realtime.getWeather().getInfo());
-            headerWindDirect.setText(realtime.getWind().getDirect());
-            headerWindPower.setText(realtime.getWind().getPower());
-            headerHumidity.setText(realtime.getWeather().getHumidity()+"%");
-            headerQuality.setText(pm25.getPm25().getQuality());
-            headerCurrentpm.setText(pm25.getPm25().getCurPm());
+
+            setHeaderData(realtime, pm25);
+            setFutureWeather(futureWeather);
+
+
             super.handleMessage(msg);
         }
     };
+
+    private void setFutureWeather(List<FutureWeather> futureWeather)
+    {
+        fwLabel1.setImageDrawable(getResources().getDrawable(weatherIcon.get(WeatherUtils.handleWeatherStr(futureWeather.get(0).getInfo().getDay().get(1)))));
+        fwLabel2.setImageDrawable(getResources().getDrawable(weatherIcon.get(WeatherUtils.handleWeatherStr(futureWeather.get(1).getInfo().getDay().get(1)))));
+        fwLabel3.setImageDrawable(getResources().getDrawable(weatherIcon.get(WeatherUtils.handleWeatherStr(futureWeather.get(2).getInfo().getDay().get(1)))));
+
+        fwDay1.setText("今天");
+        fwDay2.setText("明天");
+        fwDay3.setText("周"+futureWeather.get(2).getWeek());
+
+        fwInfo1.setText(futureWeather.get(0).getInfo().getDay().get(1)+" / "+futureWeather.get(0).getInfo().getDay().get(3));
+        fwInfo2.setText(futureWeather.get(1).getInfo().getDay().get(1)+" / "+futureWeather.get(0).getInfo().getDay().get(3));
+        fwInfo3.setText(futureWeather.get(2).getInfo().getDay().get(1)+" / "+futureWeather.get(0).getInfo().getDay().get(3));
+
+        fwTemp1.setText(futureWeather.get(0).getInfo().getDay().get(2)+"°/"+futureWeather.get(0).getInfo().getNight().get(2)+"°");
+        fwTemp2.setText(futureWeather.get(1).getInfo().getDay().get(2)+"°/"+futureWeather.get(0).getInfo().getNight().get(2)+"°");
+        fwTemp3.setText(futureWeather.get(2).getInfo().getDay().get(2)+"°/"+futureWeather.get(0).getInfo().getNight().get(2)+"°");
+
+        fwBtn.setText(futureWeather.size()+"天趋势预报");
+    }
+
+    private void setHeaderData(Realtime realtime, Pm25 pm25)
+    {
+        headerTemperature.setText(realtime.getWeather().getTemperature() + "°");
+        headerCity.setText(realtime.getCity_name());
+        headerWeatherInfo.setText(realtime.getWeather().getInfo());
+        headerWindDirect.setText(realtime.getWind().getDirect());
+        headerWindPower.setText(realtime.getWind().getPower());
+        headerHumidity.setText(realtime.getWeather().getHumidity() + "%");
+        headerQuality.setText(pm25.getPm25().getQuality());
+        headerCurrentpm.setText(pm25.getPm25().getCurPm());
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -152,10 +189,49 @@ public class MainActivity extends AppCompatActivity
         initToolbar();
         setProgressView();
         setListener();
-
+        initWeatherIconMap();
         initWeatherData();
 
     }
+
+    private void initWeatherIconMap()
+    {
+        weatherIcon = new HashMap<String, Integer>();
+        weatherIcon.put("晴",R.mipmap.ic_sunny);
+        weatherIcon.put("多云",R.mipmap.ic_clound);
+        weatherIcon.put("阴",R.mipmap.ic_yin);
+        weatherIcon.put("阵雨",R.mipmap.ic_rain);
+        weatherIcon.put("雷阵雨",R.mipmap.ic_rain);
+        weatherIcon.put("雷阵雨伴有冰雹",R.mipmap.ic_hail);
+        weatherIcon.put("雨夹雪",R.mipmap.ic_rainsnow);
+        weatherIcon.put("小雨",R.mipmap.ic_rain);
+        weatherIcon.put("中雨",R.mipmap.ic_middlerain);
+        weatherIcon.put("大雨",R.mipmap.ic_heavyrain);
+        weatherIcon.put("暴雨",R.mipmap.ic_heavyrain);
+        weatherIcon.put("大暴雨",R.mipmap.ic_heavyrain);
+        weatherIcon.put("特大暴雨",R.mipmap.ic_heavyrain);
+        weatherIcon.put("阵雪",R.mipmap.ic_snow);
+        weatherIcon.put("小雪",R.mipmap.ic_snow);
+        weatherIcon.put("中雪",R.mipmap.ic_middlesnow);
+        weatherIcon.put("大雪",R.mipmap.ic_heavysnow);
+        weatherIcon.put("暴雪",R.mipmap.ic_heavysnow);
+        weatherIcon.put("雾",R.mipmap.ic_fog);
+        weatherIcon.put("冻雨",R.mipmap.ic_freezing_rain);
+        weatherIcon.put("沙尘暴",R.mipmap.ic_sandstorm);
+        weatherIcon.put("小雨-中雨",R.mipmap.ic_middlerain);
+        weatherIcon.put("中雨-大雨",R.mipmap.ic_heavyrain);
+        weatherIcon.put("大雨-暴雨",R.mipmap.ic_heavyrain);
+        weatherIcon.put("暴雨-大暴雨",R.mipmap.ic_heavyrain);
+        weatherIcon.put("大暴雨-特大暴雨",R.mipmap.ic_heavyrain);
+        weatherIcon.put("小雪-中雪",R.mipmap.ic_middlesnow);
+        weatherIcon.put("中雪-大雪",R.mipmap.ic_heavysnow);
+        weatherIcon.put("大雪-暴雪",R.mipmap.ic_heavysnow);
+        weatherIcon.put("浮尘",R.mipmap.ic_haze);
+        weatherIcon.put("扬沙",R.mipmap.ic_haze);
+        weatherIcon.put("强沙尘暴",R.mipmap.ic_sandstorm);
+        weatherIcon.put("霾",R.mipmap.ic_haze);
+    }
+
 
     private void initWeatherData()
     {
@@ -180,7 +256,7 @@ public class MainActivity extends AppCompatActivity
                 String body = response.body().string();
                 Message msg = new Message();
                 Bundle bundle = new Bundle();
-                bundle.putString("data",body);
+                bundle.putString("data", body);
                 msg.setData(bundle);
                 weatherHanlder.sendMessage(msg);
             }
@@ -203,8 +279,8 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset)
             {
-                Log.i("mm","==>"+verticalOffset);
-                if(verticalOffset == 0)
+                Log.i("mm", "==>" + verticalOffset);
+                if (verticalOffset == 0)
                 {
                     mainSwiperefreshlayout.setEnabled(true);
                 }
@@ -213,8 +289,7 @@ public class MainActivity extends AppCompatActivity
                 {
                     mainToolbar.setTitle("广州");
                     mainSwiperefreshlayout.setEnabled(false);
-                }
-                else
+                } else
                 {
                     mainToolbar.setTitle("");
                 }
