@@ -26,6 +26,7 @@
                 android:layout_height="match_parent"
                 android:fitsSystemWindows="true"
                 app:contentScrim="?attr/colorPrimary"
+                app:layout_collapseParallaxMultiplier="1"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
                 <include

@@ -13,7 +13,10 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.gaoyy.easyweather.R;
 import com.gaoyy.easyweather.bean.FutureWeather;
@@ -39,12 +42,76 @@ public class MainActivity extends AppCompatActivity
     private CollapsingToolbarLayout mainCollapsingtoolbarlayout;
     private Toolbar mainToolbar;
 
+    private TextView headerTemperature;
+    private LinearLayout linearLayout;
+    private TextView headerCity;
+    private TextView headerWeatherInfo;
+    private TextView headerWindDirect;
+    private TextView headerWindPower;
+    private TextView headerHumidity;
+    private TextView headerQuality;
+    private TextView headerCurrentpm;
+
+    private ImageView fwLabel1;
+    private LinearLayout fwDetail1;
+    private TextView fwDay1;
+    private TextView fwInfo1;
+    private View view1;
+    private TextView fwTemp1;
+    private ImageView fwLabel2;
+    private LinearLayout fwDetail2;
+    private TextView fwDay2;
+    private TextView fwInfo2;
+    private View view2;
+    private TextView fwTemp2;
+    private ImageView fwLabel3;
+    private LinearLayout linearLayout2;
+    private TextView textView;
+    private TextView textView2;
+    private View view;
+    private TextView fwTemp3;
+
+
     private void assignViews()
     {
         mainSwiperefreshlayout = (SwipeRefreshLayout) findViewById(R.id.main_swiperefreshlayout);
         mainAppbarlayout = (AppBarLayout) findViewById(R.id.main_appbarlayout);
         mainCollapsingtoolbarlayout = (CollapsingToolbarLayout) findViewById(R.id.main_collapsingtoolbarlayout);
         mainToolbar = (Toolbar) findViewById(R.id.main_toolbar);
+
+        //====header======
+        headerTemperature = (TextView) findViewById(R.id.header_temperature);
+        linearLayout = (LinearLayout) findViewById(R.id.linearLayout);
+        headerCity = (TextView) findViewById(R.id.header_city);
+        headerWeatherInfo = (TextView) findViewById(R.id.header_weather_info);
+        headerWindDirect = (TextView) findViewById(R.id.header_wind_direct);
+        headerWindPower = (TextView) findViewById(R.id.header_wind_power);
+        headerHumidity = (TextView) findViewById(R.id.header_humidity);
+        headerQuality = (TextView) findViewById(R.id.header_quality);
+        headerCurrentpm = (TextView) findViewById(R.id.header_currentpm);
+
+
+        //========futureweather=============
+
+        fwLabel1 = (ImageView) findViewById(R.id.fw_label1);
+        fwDetail1 = (LinearLayout) findViewById(R.id.fw_detail1);
+        fwDay1 = (TextView) findViewById(R.id.fw_day1);
+        fwInfo1 = (TextView) findViewById(R.id.fw_info1);
+        view1 = findViewById(R.id.view1);
+        fwTemp1 = (TextView) findViewById(R.id.fw_temp1);
+        fwLabel2 = (ImageView) findViewById(R.id.fw_label2);
+        fwDetail2 = (LinearLayout) findViewById(R.id.fw_detail2);
+        fwDay2 = (TextView) findViewById(R.id.fw_day2);
+        fwInfo2 = (TextView) findViewById(R.id.fw_info2);
+        view2 = findViewById(R.id.view2);
+        fwTemp2 = (TextView) findViewById(R.id.fw_temp2);
+        fwLabel3 = (ImageView) findViewById(R.id.fw_label3);
+        linearLayout2 = (LinearLayout) findViewById(R.id.linearLayout2);
+        textView = (TextView) findViewById(R.id.textView);
+        textView2 = (TextView) findViewById(R.id.textView2);
+        view = findViewById(R.id.view);
+        fwTemp3 = (TextView) findViewById(R.id.fw_temp3);
+
     }
 
 
@@ -64,6 +131,14 @@ public class MainActivity extends AppCompatActivity
             Log.i("mm", futureWeather.toString());
             Pm25 pm25 = JsonUtils.getPm25Bean(body);
             Log.i("mm", pm25.toString());
+            headerTemperature.setText(realtime.getWeather().getTemperature()+"°");
+            headerCity.setText(realtime.getCity_name());
+            headerWeatherInfo.setText(realtime.getWeather().getInfo());
+            headerWindDirect.setText(realtime.getWind().getDirect());
+            headerWindPower.setText(realtime.getWind().getPower());
+            headerHumidity.setText(realtime.getWeather().getHumidity()+"%");
+            headerQuality.setText(pm25.getPm25().getQuality());
+            headerCurrentpm.setText(pm25.getPm25().getCurPm());
             super.handleMessage(msg);
         }
     };
@@ -77,7 +152,6 @@ public class MainActivity extends AppCompatActivity
         initToolbar();
         setProgressView();
         setListener();
-
 
         initWeatherData();
 
@@ -120,18 +194,27 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onRefresh()
             {
-                Toast.makeText(MainActivity.this,"aaa",Toast.LENGTH_SHORT).show();
+                initWeatherData();
             }
         });
         mainAppbarlayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener()
         {
+
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset)
             {
+                Log.i("mm","==>"+verticalOffset);
+                if(verticalOffset == 0)
+                {
+                    mainSwiperefreshlayout.setEnabled(true);
+                }
+
                 if (Math.abs(verticalOffset) == appBarLayout.getTotalScrollRange())
                 {
-                    mainToolbar.setTitle("GZ");
-                } else
+                    mainToolbar.setTitle("广州");
+                    mainSwiperefreshlayout.setEnabled(false);
+                }
+                else
                 {
                     mainToolbar.setTitle("");
                 }

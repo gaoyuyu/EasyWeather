@@ -3,11 +3,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="25dp"
-    android:background="@color/colorPrimary">
+    android:background="@color/colorPrimary"
+    >
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/header_temperature"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
@@ -20,15 +20,16 @@
         />
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/textView"
-        android:layout_alignStart="@+id/textView"
-        android:layout_below="@+id/textView"
+        android:layout_alignEnd="@+id/header_temperature"
+        android:layout_alignStart="@+id/header_temperature"
+        android:layout_below="@+id/header_temperature"
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/city"
+            android:id="@+id/header_city"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="广州"
@@ -43,7 +44,7 @@
             android:background="@color/white"/>
 
         <TextView
-            android:id="@+id/cloudy"
+            android:id="@+id/header_weather_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="多云"
@@ -56,8 +57,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:orientation="horizontal"
         android:layout_margin="15sp"
+        android:orientation="horizontal"
         >
 
         <LinearLayout
@@ -69,20 +70,20 @@
             >
 
             <TextView
+                android:id="@+id/header_wind_direct"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="西北风"
                 android:textColor="@color/white"
-                android:textSize="16sp"
-                />
+                android:textSize="16sp"/>
 
             <TextView
+                android:id="@+id/header_wind_power"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="2级"
                 android:textColor="@color/white"
-                android:textSize="32sp"
-                />
+                android:textSize="32sp"/>
         </LinearLayout>
 
         <View
@@ -109,12 +110,12 @@
                 />
 
             <TextView
+                android:id="@+id/header_humidity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="55%"
                 android:textColor="@color/white"
-                android:textSize="32sp"
-                />
+                android:textSize="32sp"/>
         </LinearLayout>
 
         <View
@@ -133,22 +134,23 @@
             >
 
             <TextView
+                android:id="@+id/header_quality"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="中度污染"
                 android:textColor="@color/white"
-                android:textSize="16sp"
-                />
+                android:textSize="16sp"/>
 
             <TextView
+                android:id="@+id/header_currentpm"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="161"
                 android:textColor="@color/white"
-                android:textSize="32sp"
-                />
+                android:textSize="32sp"/>
         </LinearLayout>
 
 
     </LinearLayout>
+
 </RelativeLayout>
