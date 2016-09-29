@@ -25,12 +25,4 @@ public class Life
         this.info = info;
     }
 
-    @Override
-    public String toString()
-    {
-        return "Life{" +
-                "date='" + date + '\'' +
-                ", info=" + info.toString() +
-                '}';
-    }
 }

@@ -85,17 +85,4 @@ public class Info
         this.ziwaixian = ziwaixian;
     }
 
-    @Override
-    public String toString()
-    {
-        return "Info{" +
-                "chuanyi=" + chuanyi.toString() +
-                ", ganmao=" + ganmao.toString() +
-                ", kongtiao=" + kongtiao.toString() +
-                ", wuran=" + wuran.toString() +
-                ", xiche=" + xiche.toString() +
-                ", yundong=" + yundong.toString() +
-                ", ziwaixian=" + ziwaixian.toString() +
-                '}';
-    }
 }

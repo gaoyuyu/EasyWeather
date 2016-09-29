@@ -5,24 +5,45 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/gray"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.gaoyy.easyweather.ui.MainActivity"
-    android:background="@color/gray"
     tools:showIn="@layout/activity_main">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
+        <include
+            layout="@layout/air_quality"
+            />
+
         <include
             layout="@layout/future_weather"
             />
+
         <include
-            android:layout_marginTop="15dp"
+            layout="@layout/air_quality"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            layout="@layout/air_quality"
+            android:layout_marginTop="15dp"
             />
+
+        <include
+            layout="@layout/life_index"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingBottom="15dp"
+            android:paddingTop="15dp"
+            android:text="数据来源 @聚合数据"/>
 
     </LinearLayout>
 

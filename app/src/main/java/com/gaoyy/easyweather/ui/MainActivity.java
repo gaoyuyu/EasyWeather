@@ -8,6 +8,8 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
@@ -19,15 +21,18 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.gaoyy.easyweather.R;
+import com.gaoyy.easyweather.adapter.LifeIndexAdapter;
 import com.gaoyy.easyweather.bean.FutureWeather;
 import com.gaoyy.easyweather.bean.Life;
 import com.gaoyy.easyweather.bean.Pm25;
 import com.gaoyy.easyweather.bean.Realtime;
 import com.gaoyy.easyweather.utils.JsonUtils;
 import com.gaoyy.easyweather.utils.WeatherUtils;
+import com.gaoyy.easyweather.view.CircleIndexView;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,6 +80,18 @@ public class MainActivity extends AppCompatActivity
     private TextView fwTemp3;
     private TextView fwBtn;
 
+    private TextView airLeftTitle;
+    private TextView airRightTime;
+    private CircleIndexView airPm25;
+    private CircleIndexView airPm10;
+
+
+    private RecyclerView lifeIndexRv;
+
+    private LifeIndexAdapter lifeIndexAdapter;
+
+    private List<List<String>> lifeindexs = new ArrayList<List<String>>();
+
 
     private Map<String, Integer> weatherIcon;
 
@@ -117,9 +134,16 @@ public class MainActivity extends AppCompatActivity
         fwInfo3 = (TextView) findViewById(R.id.fw_info3);
         view = findViewById(R.id.view);
         fwTemp3 = (TextView) findViewById(R.id.fw_temp3);
-        fwBtn = (TextView)findViewById(R.id.fw_btn);
+        fwBtn = (TextView) findViewById(R.id.fw_btn);
 
+        //=========life index===============
+        lifeIndexRv = (RecyclerView) findViewById(R.id.life_index_rv);
 
+        //=========air quality===============
+        airLeftTitle = (TextView) findViewById(R.id.air_left_title);
+        airRightTime = (TextView) findViewById(R.id.air_right_time);
+        airPm25 = (CircleIndexView) findViewById(R.id.air_pm25);
+        airPm10 = (CircleIndexView) findViewById(R.id.air_pm10);
     }
 
 
@@ -131,21 +155,64 @@ public class MainActivity extends AppCompatActivity
             mainSwiperefreshlayout.setRefreshing(false);
             String body = (String) msg.getData().get("data");
             Realtime realtime = JsonUtils.getRealTimeBean(body);
-            Log.i("mm", realtime.toString());
+//            Log.i("mm", realtime.toString());
             Life life = JsonUtils.getLifeBean(body);
-            Log.i("mm", life.toString());
+//            Log.i("mm", life.toString());
             List<FutureWeather> futureWeather = JsonUtils.getFutureWeatherBean(body);
-            Log.i("mm", futureWeather.toString());
+//            Log.i("mm", futureWeather.toString());
             Pm25 pm25 = JsonUtils.getPm25Bean(body);
-            Log.i("mm", pm25.toString());
+//            Log.i("mm", pm25.toString());
 
             setHeaderData(realtime, pm25);
             setFutureWeather(futureWeather);
+            setLifeIndexData(life);
+
+
+
+            airLeftTitle.setText("空气质量 | "+pm25.getPm25().getQuality());
+            String[] arr = pm25.getDateTime().split("年");
+            airRightTime.setText(arr[1]+"发布");
+            airPm25.updateIndex(Integer.valueOf(pm25.getPm25().getPm25()));
+            airPm10.updateIndex(Integer.valueOf(pm25.getPm25().getPm10()));
 
 
             super.handleMessage(msg);
         }
     };
+
+    private void setLifeIndexData(Life life)
+    {
+        lifeindexs.clear();
+        if(life.getInfo().getChuanyi() != null)
+        {
+            lifeindexs.add(life.getInfo().getChuanyi());
+        }
+        if(life.getInfo().getGanmao() != null)
+        {
+            lifeindexs.add(life.getInfo().getGanmao());
+        }
+        if(life.getInfo().getKongtiao() != null)
+        {
+            lifeindexs.add(life.getInfo().getKongtiao());
+        }
+        if(life.getInfo().getWuran() != null)
+        {
+            lifeindexs.add(life.getInfo().getWuran());
+        }
+        if(life.getInfo().getXiche() != null)
+        {
+            lifeindexs.add(life.getInfo().getXiche());
+        }
+        if(life.getInfo().getYundong() != null)
+        {
+            lifeindexs.add(life.getInfo().getYundong());
+        }
+        if(life.getInfo().getZiwaixian() != null)
+        {
+            lifeindexs.add(life.getInfo().getZiwaixian());
+        }
+        lifeIndexAdapter.updateData(lifeindexs);
+    }
 
     private void setFutureWeather(List<FutureWeather> futureWeather)
     {
@@ -155,17 +222,17 @@ public class MainActivity extends AppCompatActivity
 
         fwDay1.setText("今天");
         fwDay2.setText("明天");
-        fwDay3.setText("周"+futureWeather.get(2).getWeek());
+        fwDay3.setText("周" + futureWeather.get(2).getWeek());
 
-        fwInfo1.setText(futureWeather.get(0).getInfo().getDay().get(1)+" / "+futureWeather.get(0).getInfo().getDay().get(3));
-        fwInfo2.setText(futureWeather.get(1).getInfo().getDay().get(1)+" / "+futureWeather.get(0).getInfo().getDay().get(3));
-        fwInfo3.setText(futureWeather.get(2).getInfo().getDay().get(1)+" / "+futureWeather.get(0).getInfo().getDay().get(3));
+        fwInfo1.setText(futureWeather.get(0).getInfo().getDay().get(1) + " / " + futureWeather.get(0).getInfo().getDay().get(3));
+        fwInfo2.setText(futureWeather.get(1).getInfo().getDay().get(1) + " / " + futureWeather.get(0).getInfo().getDay().get(3));
+        fwInfo3.setText(futureWeather.get(2).getInfo().getDay().get(1) + " / " + futureWeather.get(0).getInfo().getDay().get(3));
 
-        fwTemp1.setText(futureWeather.get(0).getInfo().getDay().get(2)+"°/"+futureWeather.get(0).getInfo().getNight().get(2)+"°");
-        fwTemp2.setText(futureWeather.get(1).getInfo().getDay().get(2)+"°/"+futureWeather.get(0).getInfo().getNight().get(2)+"°");
-        fwTemp3.setText(futureWeather.get(2).getInfo().getDay().get(2)+"°/"+futureWeather.get(0).getInfo().getNight().get(2)+"°");
+        fwTemp1.setText(futureWeather.get(0).getInfo().getDay().get(2) + "°/" + futureWeather.get(0).getInfo().getNight().get(2) + "°");
+        fwTemp2.setText(futureWeather.get(1).getInfo().getDay().get(2) + "°/" + futureWeather.get(0).getInfo().getNight().get(2) + "°");
+        fwTemp3.setText(futureWeather.get(2).getInfo().getDay().get(2) + "°/" + futureWeather.get(0).getInfo().getNight().get(2) + "°");
 
-        fwBtn.setText(futureWeather.size()+"天趋势预报");
+        fwBtn.setText(futureWeather.size() + "天趋势预报");
     }
 
     private void setHeaderData(Realtime realtime, Pm25 pm25)
@@ -187,49 +254,61 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         assignViews();
         initToolbar();
-        setProgressView();
+        configViews();
+
         setListener();
         initWeatherIconMap();
         initWeatherData();
 
     }
 
+    private void configViews()
+    {
+        setProgressView();
+        lifeIndexAdapter = new LifeIndexAdapter(this, lifeindexs);
+        lifeIndexRv.setAdapter(lifeIndexAdapter);
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        lifeIndexRv.setLayoutManager(linearLayoutManager);
+
+    }
+
     private void initWeatherIconMap()
     {
         weatherIcon = new HashMap<String, Integer>();
-        weatherIcon.put("晴",R.mipmap.ic_sunny);
-        weatherIcon.put("多云",R.mipmap.ic_clound);
-        weatherIcon.put("阴",R.mipmap.ic_yin);
-        weatherIcon.put("阵雨",R.mipmap.ic_rain);
-        weatherIcon.put("雷阵雨",R.mipmap.ic_rain);
-        weatherIcon.put("雷阵雨伴有冰雹",R.mipmap.ic_hail);
-        weatherIcon.put("雨夹雪",R.mipmap.ic_rainsnow);
-        weatherIcon.put("小雨",R.mipmap.ic_rain);
-        weatherIcon.put("中雨",R.mipmap.ic_middlerain);
-        weatherIcon.put("大雨",R.mipmap.ic_heavyrain);
-        weatherIcon.put("暴雨",R.mipmap.ic_heavyrain);
-        weatherIcon.put("大暴雨",R.mipmap.ic_heavyrain);
-        weatherIcon.put("特大暴雨",R.mipmap.ic_heavyrain);
-        weatherIcon.put("阵雪",R.mipmap.ic_snow);
-        weatherIcon.put("小雪",R.mipmap.ic_snow);
-        weatherIcon.put("中雪",R.mipmap.ic_middlesnow);
-        weatherIcon.put("大雪",R.mipmap.ic_heavysnow);
-        weatherIcon.put("暴雪",R.mipmap.ic_heavysnow);
-        weatherIcon.put("雾",R.mipmap.ic_fog);
-        weatherIcon.put("冻雨",R.mipmap.ic_freezing_rain);
-        weatherIcon.put("沙尘暴",R.mipmap.ic_sandstorm);
-        weatherIcon.put("小雨-中雨",R.mipmap.ic_middlerain);
-        weatherIcon.put("中雨-大雨",R.mipmap.ic_heavyrain);
-        weatherIcon.put("大雨-暴雨",R.mipmap.ic_heavyrain);
-        weatherIcon.put("暴雨-大暴雨",R.mipmap.ic_heavyrain);
-        weatherIcon.put("大暴雨-特大暴雨",R.mipmap.ic_heavyrain);
-        weatherIcon.put("小雪-中雪",R.mipmap.ic_middlesnow);
-        weatherIcon.put("中雪-大雪",R.mipmap.ic_heavysnow);
-        weatherIcon.put("大雪-暴雪",R.mipmap.ic_heavysnow);
-        weatherIcon.put("浮尘",R.mipmap.ic_haze);
-        weatherIcon.put("扬沙",R.mipmap.ic_haze);
-        weatherIcon.put("强沙尘暴",R.mipmap.ic_sandstorm);
-        weatherIcon.put("霾",R.mipmap.ic_haze);
+        weatherIcon.put("晴", R.mipmap.ic_sunny);
+        weatherIcon.put("多云", R.mipmap.ic_clound);
+        weatherIcon.put("阴", R.mipmap.ic_yin);
+        weatherIcon.put("阵雨", R.mipmap.ic_rain);
+        weatherIcon.put("雷阵雨", R.mipmap.ic_rain);
+        weatherIcon.put("雷阵雨伴有冰雹", R.mipmap.ic_hail);
+        weatherIcon.put("雨夹雪", R.mipmap.ic_rainsnow);
+        weatherIcon.put("小雨", R.mipmap.ic_rain);
+        weatherIcon.put("中雨", R.mipmap.ic_middlerain);
+        weatherIcon.put("大雨", R.mipmap.ic_heavyrain);
+        weatherIcon.put("暴雨", R.mipmap.ic_heavyrain);
+        weatherIcon.put("大暴雨", R.mipmap.ic_heavyrain);
+        weatherIcon.put("特大暴雨", R.mipmap.ic_heavyrain);
+        weatherIcon.put("阵雪", R.mipmap.ic_snow);
+        weatherIcon.put("小雪", R.mipmap.ic_snow);
+        weatherIcon.put("中雪", R.mipmap.ic_middlesnow);
+        weatherIcon.put("大雪", R.mipmap.ic_heavysnow);
+        weatherIcon.put("暴雪", R.mipmap.ic_heavysnow);
+        weatherIcon.put("雾", R.mipmap.ic_fog);
+        weatherIcon.put("冻雨", R.mipmap.ic_freezing_rain);
+        weatherIcon.put("沙尘暴", R.mipmap.ic_sandstorm);
+        weatherIcon.put("小雨-中雨", R.mipmap.ic_middlerain);
+        weatherIcon.put("中雨-大雨", R.mipmap.ic_heavyrain);
+        weatherIcon.put("大雨-暴雨", R.mipmap.ic_heavyrain);
+        weatherIcon.put("暴雨-大暴雨", R.mipmap.ic_heavyrain);
+        weatherIcon.put("大暴雨-特大暴雨", R.mipmap.ic_heavyrain);
+        weatherIcon.put("小雪-中雪", R.mipmap.ic_middlesnow);
+        weatherIcon.put("中雪-大雪", R.mipmap.ic_heavysnow);
+        weatherIcon.put("大雪-暴雪", R.mipmap.ic_heavysnow);
+        weatherIcon.put("浮尘", R.mipmap.ic_haze);
+        weatherIcon.put("扬沙", R.mipmap.ic_haze);
+        weatherIcon.put("强沙尘暴", R.mipmap.ic_sandstorm);
+        weatherIcon.put("霾", R.mipmap.ic_haze);
     }
 
 

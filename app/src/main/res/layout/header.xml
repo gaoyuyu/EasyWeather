@@ -75,7 +75,7 @@
                 android:layout_height="wrap_content"
                 android:text="西北风"
                 android:textColor="@color/white"
-                android:textSize="16sp"/>
+                android:textSize="14sp"/>
 
             <TextView
                 android:id="@+id/header_wind_power"
@@ -83,7 +83,7 @@
                 android:layout_height="wrap_content"
                 android:text="2级"
                 android:textColor="@color/white"
-                android:textSize="32sp"/>
+                android:textSize="30sp"/>
         </LinearLayout>
 
         <View
@@ -106,7 +106,7 @@
                 android:layout_height="wrap_content"
                 android:text="相对湿度"
                 android:textColor="@color/white"
-                android:textSize="16sp"
+                android:textSize="14sp"
                 />
 
             <TextView
@@ -115,7 +115,7 @@
                 android:layout_height="wrap_content"
                 android:text="55%"
                 android:textColor="@color/white"
-                android:textSize="32sp"/>
+                android:textSize="30sp"/>
         </LinearLayout>
 
         <View
@@ -139,7 +139,7 @@
                 android:layout_height="wrap_content"
                 android:text="中度污染"
                 android:textColor="@color/white"
-                android:textSize="16sp"/>
+                android:textSize="14sp"/>
 
             <TextView
                 android:id="@+id/header_currentpm"
@@ -147,7 +147,7 @@
                 android:layout_height="wrap_content"
                 android:text="161"
                 android:textColor="@color/white"
-                android:textSize="32sp"/>
+                android:textSize="30sp"/>
         </LinearLayout>
 
 

@@ -3,10 +3,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white">
+
     <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:id="@+id/life_item_label"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
         android:layout_margin="10dp"
@@ -14,24 +15,35 @@
         />
 
     <LinearLayout
+        android:id="@+id/linearLayout3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/imageView"
-        android:layout_toEndOf="@+id/imageView"
+        android:layout_alignBottom="@+id/life_item_label"
+        android:layout_alignTop="@+id/life_item_label"
+        android:layout_toEndOf="@+id/life_item_label"
+        android:gravity="center_vertical"
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/life_item_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="炎热"
             android:textColor="@color/basic_text_color"
-            android:textSize="20sp"/>
+            android:textSize="14sp"/>
 
         <TextView
+            android:id="@+id/life_item_detail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="2dp"
             android:text="天气炎热，建议着短衫、短裙、短裤、薄型T恤衫等清凉夏季服装。"
-            android:textSize="12sp"/>
+            android:textSize="11sp"/>
     </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"/>
 </RelativeLayout>
